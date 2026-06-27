@@ -1,31 +1,56 @@
 import { createWebHistory, createRouter } from "vue-router";
-import ContactBook from "@/views/ContactBook.vue";
+
 const routes = [
   {
+    path: "/login",
+    name: "login",
+    component: () => import("@/views/Login.vue"),
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: () => import("@/views/Register.vue"),
+  },
+  {
     path: "/",
+    redirect: "/login",
+  },
+  {
+    path: "/contacts",
     name: "contactbook",
-    component: ContactBook,
-  },
-  {
-    path: "/:pathMatch(.*)*",
-    name: "notfound",
-    component: () => import("@/views/NotFound.vue"),
-  },
-  {
-    path: "/contacts/:id",
-    name: "contact.edit",
-    component: () => import("@/views/ContactEdit.vue"),
-    props: true, // Truyền các biến trong $route.params vào làm props
+    component: () => import("@/views/ContactBook.vue"),
   },
   {
     path: "/contacts/add",
     name: "contact.add",
     component: () => import("@/views/ContactAdd.vue"),
   },
+  {
+    path: "/contacts/:id",
+    name: "contact.edit",
+    component: () => import("@/views/ContactEdit.vue"),
+    props: true,
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "notfound",
+    component: () => import("@/views/NotFound.vue"),
+  },
 ];
+
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const user = localStorage.getItem("user");
+
+  if (!user && to.name !== "login" && to.name !== "register") {
+    next({ name: "login" });
+  } else {
+    next();
+  }
 });
 
 export default router;

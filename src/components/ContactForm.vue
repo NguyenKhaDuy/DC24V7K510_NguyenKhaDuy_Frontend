@@ -1,30 +1,46 @@
 <template>
     <Form @submit="submitContact" :validation-schema="contactFormSchema">
+
         <div class="form-group">
-            <label for="name">Tên</label>
+            <label>Tên</label>
             <Field name="name" type="text" class="form-control" v-model="contactLocal.name" />
             <ErrorMessage name="name" class="error-feedback" />
         </div>
 
         <div class="form-group">
-            <label for="email">E-mail</label>
+            <label>E-mail</label>
             <Field name="email" type="email" class="form-control" v-model="contactLocal.email" />
             <ErrorMessage name="email" class="error-feedback" />
         </div>
 
         <div class="form-group">
-            <label for="address">Địa chỉ</label>
+            <label>Địa chỉ</label>
             <Field name="address" type="text" class="form-control" v-model="contactLocal.address" />
             <ErrorMessage name="address" class="error-feedback" />
         </div>
 
         <div class="form-group">
-            <label for="phone">Điện thoại</label>
+            <label>Điện thoại</label>
             <Field name="phone" type="tel" class="form-control" v-model="contactLocal.phone" />
             <ErrorMessage name="phone" class="error-feedback" />
         </div>
 
-        <div class="form-group form-check">
+        <!-- SỞ THÍCH -->
+        <div class="form-group">
+            <label><strong>Sở thích</strong></label>
+
+            <div class="form-check" v-for="hobby in hobbyOptions" :key="hobby">
+                <input class="form-check-input" type="checkbox" :id="hobby" :value="hobby"
+                    v-model="contactLocal.hobbies" />
+
+                <label class="form-check-label" :for="hobby">
+                    {{ hobby }}
+                </label>
+            </div>
+        </div>
+
+        <!-- YÊU THÍCH -->
+        <div class="form-group form-check mt-3">
             <input id="favorite" type="checkbox" class="form-check-input" v-model="contactLocal.favorite" />
 
             <label for="favorite" class="form-check-label">
@@ -32,7 +48,7 @@
             </label>
         </div>
 
-        <div class="form-group mt-3">
+        <div class="form-group mt-4">
             <button class="btn btn-primary">
                 Lưu
             </button>
@@ -45,6 +61,7 @@
                 Thoát
             </button>
         </div>
+
     </Form>
 </template>
 
@@ -69,6 +86,7 @@ export default {
     emits: ["submit:contact", "delete:contact"],
 
     data() {
+
         const contactFormSchema = yup.object({
             name: yup
                 .string()
@@ -94,12 +112,26 @@ export default {
         });
 
         return {
-            contactLocal: { ...this.contact },
+            contactLocal: {
+                ...this.contact,
+                hobbies: this.contact.hobbies || [],
+            },
+
+            hobbyOptions: [
+                "Đọc sách",
+                "Du lịch",
+                "Chơi game",
+                "Nghe nhạc",
+                "Xem phim",
+                "Thể thao",
+            ],
+
             contactFormSchema,
         };
     },
 
     methods: {
+
         submitContact() {
             this.$emit("submit:contact", this.contactLocal);
         },
@@ -125,4 +157,8 @@ export default {
 
 <style scoped>
 @import "@/assets/form.css";
+
+.form-check {
+    margin-bottom: 8px;
+}
 </style>
